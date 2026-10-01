@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step//Up - Multi-Page Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#090e1a',
+                        cardBg: '#111c3a',
+                        cardLight: '#18254c',
+                        accentOrange: '#f59e0b',
+                        accentBlue: '#3b82f6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090e1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        .page-view {
+            display: none;
+        }
+        .page-view.active {
+            display: grid;
+        }
+        .page-view-flex.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="bg-darkBg text-white font-sans antialiased h-screen flex overflow-hidden">
+
+    <aside class="w-64 bg-cardBg border-r border-slate-800 flex flex-col justify-between p-6 z-10 shrink-0 hidden md:flex">
+        <div>
+            <!-- Logo Brand -->
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-9 h-9 bg-gradient-to-tr from-orange-500 to-amber-400 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20">
+                    <span class="text-xl">🏃</span>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight">Step//Up</h1>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-widest uppercase">Small Steps, Big Changes</p>
+                </div>
+            </div>
+
+            <!-- Menu Navigation Links -->
+            <nav class="space-y-1.5">
+                <button onclick="switchPage('home')" id="nav-home" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all font-medium text-sm">
+                    <span class="text-base">🏠</span> Home
+                </button>
+                <button onclick="switchPage('stepcount')" id="nav-stepcount" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all font-medium text-sm">
+                    <span class="text-base">👟</span> Step Count
+                </button>
+                <button onclick="switchPage('ranks')" id="nav-ranks" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all font-medium text-sm">
+                    <span class="text-base">🏆</span> Ranks
+                </button>
+                <button onclick="switchPage('history')" id="nav-history" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all font-medium text-sm">
+                    <span class="text-base">⏳</span> Walking History
+                </button>
+                <button onclick="switchPage('streak')" id="nav-streak" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white bg-accentBlue shadow-lg shadow-blue-500/20 font-medium text-sm">
+                    <span class="text-base">🔥</span> Streak
+                </button>
+                <button onclick="switchPage('goals')" id="nav-goals" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all font-medium text-sm">
+                    <span class="text-base">🎯</span> Daily Goals
+                </button>
+                <button onclick="switchPage('character')" id="nav-character" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all font-medium text-sm">
+                    <span class="text-base">🐻</span> Character
+                </button>
+            </nav>
+        </div>
+
+        <!-- User Profile Footer in Sidebar -->
+        <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center border border-amber-500/30 text-lg shadow-inner">
+                    🐻
+                </div>
+                <div>
+                    <div class="text-sm font-semibold">Tsabitah</div>
+                    <div class="text-[11px] text-slate-400">@tsabitaa</div>
+                </div>
+            </div>
+            <button class="text-slate-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-slate-800" title="Settings">
+                ⚙️
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        
+        <!-- Top Navigation Header -->
+        <header class="h-20 bg-darkBg/80 backdrop-blur-md border-b border-slate-800/60 px-6 lg:px-8 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-4 w-full max-w-md">
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">🔍</span>
+                    <input id="searchInput" type="text" placeholder="Search anything... (tekan Enter)" class="w-full bg-cardBg border border-slate-800/80 rounded-full pl-10 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors">
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex items-center gap-2 bg-cardBg border border-slate-800 px-3 py-1.5 rounded-full text-xs font-medium text-slate-300">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Online (Sync Active)</span>
+                </div>
+                <button class="w-10 h-10 rounded-full bg-cardBg border border-slate-800 flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 transition-colors relative">
+                    🔔
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-orange-500 rounded-full"></span>
+                </button>
+                <div class="text-xs text-slate-400 hidden lg:block font-medium">
+                    Kam, 1 Okt 2026
+                </div>
+            </div>
+        </header>
+
+        <div id="page-home" class="page-view flex-1 overflow-y-auto p-6 lg:p-8 grid-cols-1 xl:grid-cols-3 gap-6">
+            <div class="xl:col-span-2 space-y-6">
+                <!-- Welcome Banner -->
+                <div class="bg-gradient-to-r from-indigo-900 via-blue-900 to-slate-900 rounded-3xl p-8 border border-blue-700/30 shadow-xl relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <span class="text-xs font-semibold px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full border border-blue-400/20">Welcome Back, Tsabitah! 👋</span>
+                    <h2 class="text-3xl font-bold mt-3 mb-2">Ready to crush your goals today?</h2>
+                    <p class="text-slate-300 text-sm max-w-xl">You have completed 12 days of active streak. Step up your daily routine and unlock exclusive character upgrades!</p>
+                    <div class="flex items-center gap-4 mt-6">
+                        <button onclick="switchPage('stepcount')" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-blue-500/20">
+                            View Step Tracker 👟
+                        </button>
+                        <button onclick="switchPage('streak')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all border border-slate-700">
+                            Check Streak 🔥
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-md">
+                        <div class="text-slate-400 text-xs font-semibold mb-1">TODAY'S STEPS</div>
+                        <div id="home-steps" class="text-2xl font-bold text-white mb-2">7,840</div>
+                        <div class="text-xs text-emerald-400 font-medium">⚡ 78% of 10,000 goal</div>
+                    </div>
+                    <div class="bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-md">
+                        <div class="text-slate-400 text-xs font-semibold mb-1">ACTIVE STREAK</div>
+                        <div id="home-streak" class="text-2xl font-bold text-amber-400 mb-2">12 Days</div>
+                        <div class="text-xs text-slate-400 font-medium">🔥 On fire mode</div>
+                    </div>
+                    <div class="bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-md">
+                        <div class="text-slate-400 text-xs font-semibold mb-1">CALORIES BURNED</div>
+                        <div id="home-cals" class="text-2xl font-bold text-orange-400 mb-2">412 kcal</div>
+                        <div class="text-xs text-slate-400 font-medium">🎯 Target: 500 kcal</div>
+                    </div>
+                </div>
+
+                <!-- Recent Activities / Shortcuts -->
+                <div class="bg-cardBg rounded-3xl p-6 border border-slate-800 shadow-lg">
+                    <h3 class="font-bold text-base mb-4">Quick Health Overview</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-4 bg-cardLight/40 rounded-2xl border border-slate-800">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-lg">🏃‍♂️</div>
+                            <div>
+                                <h4 class="text-sm font-semibold">Morning Walk Session</h4>
+                                <p class="text-xs text-slate-400">07:30 AM · 3,240 steps recorded</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-emerald-400 font-semibold bg-emerald-500/10 px-3 py-1 rounded-full">+160 XP</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-cardLight/40 rounded-2xl border border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-lg">🔥</div>
+                            <div>
+                                <h4 class="text-sm font-semibold">Streak Check-In Completed</h4>
+                                <p class="text-xs text-slate-400">Day 12 verified successfully</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-amber-400 font-semibold bg-amber-500/10 px-3 py-1 rounded-full">Verified</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div class="bg-cardBg rounded-3xl p-6 border border-slate-800 shadow-lg">
+                <h3 class="font-bold text-base mb-4">Daily Goal Summary</h3>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-xs mb-1.5">
+                            <span class="text-slate-300">Step Goal (10,000 steps)</span>
+                            <span id="home-goal-pct" class="text-blue-400 font-bold">78%</span>
+                        </div>
+                        <div class="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden border border-slate-800">
+                            <div id="home-goal-bar" class="bg-blue-500 h-full rounded-full transition-all" style="width: 78%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs mb-1.5">
+                            <span class="text-slate-300">Water Intake (2.5L)</span>
+                            <span class="text-cyan-400 font-bold">80%</span>
+                        </div>
+                        <div class="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden border border-slate-800">
+                            <div class="bg-cyan-500 h-full rounded-full" style="width: 80%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-6 text-white shadow-xl">
+                <div class="text-3xl mb-2">⭐</div>
+                <h4 class="font-bold text-base mb-1">Level 1 Wander</h4>
+                <p class="text-xs text-orange-100 mb-4">Keep walking and checking in daily to evolve your character to Level 2!</p>
+                <button onclick="switchPage('streak')" class="w-full bg-slate-900/40 hover:bg-slate-900/60 text-white py-2.5 rounded-xl font-semibold text-xs transition-all border border-white/20">
+                    View Rewards
+                </button>
+            </div>
+        </div>
+    </div>
+
+        <div id="page-stepcount" class="page-view flex-1 overflow-y-auto p-6 lg:p-8 grid-cols-1 xl:grid-cols-3 gap-6">
+            <div class="xl:col-span-2 space-y-6">
+                <!-- Step Counter Hero Banner -->
+                <div class="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 rounded-3xl p-8 border border-emerald-700/30 shadow-xl relative overflow-hidden flex flex-col sm:flex-row justify-between items-center gap-6">
+                    <div>
+                        <span class="text-xs font-semibold px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-400/20">👟 Live Pedestrian Sensor</span>
+                        <h2 class="text-3xl font-bold mt-3 mb-2">Step Count Tracker</h2>
+                        <p class="text-slate-300 text-sm max-w-md">Simulate your walks or sync with device sensors to hit your 10,000 daily step target.</p>
+                    </div>
+                    <div class="text-6xl animate-pulse">👟</div>
+                </div>
+
+                <!-- Main Step Circular / Progress Card -->
+                <div class="bg-cardBg rounded-3xl p-8 border border-slate-800 shadow-lg text-center">
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">TODAY'S TOTAL STEPS</div>
+                    <div id="live-step-count" class="text-5xl font-black text-white mb-2">7,840</div>
+                    <div class="text-xs text-slate-400 mb-6">Target: <span class="text-emerald-400 font-bold">10,000 steps</span></div>
+
+                    <div class="w-full bg-slate-900 h-4 rounded-full overflow-hidden p-0.5 border border-slate-800 mb-6">
+                        <div id="step-progress-fill" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-300" style="width: 78.4%;"></div>
+                    </div>
+
+                    <!-- Simulator Controls -->
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <button onclick="addSteps(100)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl font-semibold text-xs transition-all border border-slate-700">
+                            +100 Steps 🚶‍♂️
+                        </button>
+                        <button onclick="addSteps(500)" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-semibold text-xs transition-all shadow-lg shadow-emerald-600/20">
+                            +500 Steps 🏃‍♂️
+                        </button>
+                        <button onclick="addSteps(1000)" class="bg-teal-600 hover:bg-teal-500 text-white px-5 py-2.5 rounded-xl font-semibold text-xs transition-all shadow-lg shadow-teal-600/20">
+                            +1,000 Steps ⚡
+                        </button>
+                        <button onclick="resetSteps()" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 px-4 py-2.5 rounded-xl font-semibold text-xs transition-all">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Metrics Grid (Calories, Distance, Active Time) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-md text-center">
+                        <div class="text-2xl mb-2">🔥</div>
+                        <div class="text-slate-400 text-xs font-semibold mb-1">EST. CALORIES</div>
+                        <div id="metric-cals" class="text-2xl font-bold text-orange-400">412 kcal</div>
+                    </div>
+                    <div class="bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-md text-center">
+                        <div class="text-2xl mb-2">📍</div>
+                        <div class="text-slate-400 text-xs font-semibold mb-1">DISTANCE</div>
+                        <div id="metric-dist" class="text-2xl font-bold text-blue-400">5.8 km</div>
+                    </div>
+                    <div class="bg-cardBg p-6 rounded-3xl border border-slate-800 shadow-md text-center">
+                        <div class="text-2xl mb-2">⏱️</div>
+                        <div class="text-slate-400 text-xs font-semibold mb-1">ACTIVE TIME</div>
+                        <div id="metric-time" class="text-2xl font-bold text-teal-400">1h 14m</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Hourly breakdown -->
+            <div class="space-y-6">
+                <div class="bg-cardBg rounded-3xl p-6 border border-slate-800 shadow-lg">
+                    <h3 class="font-bold text-base mb-4">Hourly Breakdown</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-cardLight/40 rounded-2xl border border-slate-800 text-xs">
+                            <span class="text-slate-400">08:00 - 10:00</span>
+                            <span class="font-bold text-white">2,150 steps</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-cardLight/40 rounded-2xl border border-slate-800 text-xs">
+                            <span class="text-slate-400">10:00 - 12:00</span>
+                            <span class="font-bold text-white">1,820 steps</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-cardLight/40 rounded-2xl border border-slate-800 text-xs">
+                            <span class="text-slate-400">12:00 - 14:00</span>
+                            <span class="font-bold text-white">940 steps</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-cardLight/40 rounded-2xl border border-slate-800 text-xs">
+                            <span class="text-slate-400">14:00 - 16:00</span>
+                            <span class="font-bold text-white">2,930 steps</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-streak" class="page-view active flex-1 overflow-y-auto p-6 lg:p-8 grid-cols-1 xl:grid-cols-3 gap-6">
+            
+            <!-- Left Column (Span 2) -->
+            <div class="xl:col-span-2 space-y-6">
+                
+                <!-- Streak Hero Banner -->
+                <div class="relative bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-800 rounded-3xl p-6 lg:p-8 shadow-xl border border-blue-700/30 overflow-hidden flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+                    <div class="absolute -right-6 -bottom-6 w-48 h-48 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="relative z-10 max-w-lg">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold mb-3 border border-blue-400/20">
+                            🔥 Consistency Matters
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-2">Streak</h2>
+                        <p class="text-slate-300 text-sm leading-relaxed">Keep your streak alive! The more consistent you are, the healthier and stronger you become.</p>
+                    </div>
+                    <div class="relative z-10 flex items-center gap-3 bg-slate-900/40 backdrop-blur-md p-3 rounded-2xl border border-white/10 shrink-0">
+                        <div class="text-4xl animate-bounce">🐻</div>
+                        <div class="text-2xl">❄️</div>
+                    </div>
+                </div>
+
+                <!-- Current Streak Progress Card -->
+                <div class="bg-cardBg rounded-3xl p-6 border border-slate-800/80 shadow-lg">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 bg-orange-500/10 border border-orange-500/30 rounded-2xl flex items-center justify-center text-3xl shadow-inner">
+                                🔥
+                            </div>
+                            <div>
+                                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Current Streak</span>
+                                <div class="flex items-baseline gap-2">
+                                    <h3 id="streak-days-display" class="text-3xl font-bold text-white">12 days</h3>
+                                    <span class="text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">+1 Today Active</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Check-in Action Button -->
+                        <button id="checkin-btn" onclick="performCheckIn()" class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-95 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-orange-500/20 transition-all flex items-center gap-2 cursor-pointer">
+                            <span>⚡</span> Check-In Hari Ini
+                        </button>
+                    </div>
+
+                    <div class="mb-2 flex justify-between items-center text-xs">
+                        <span class="text-slate-300 font-medium">You're on fire! Keep your streak going and reach 30 days for a special reward!</span>
+                        <span id="progress-fraction" class="text-orange-400 font-bold">12/30 days</span>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden p-0.5 border border-slate-800">
+                        <div id="progress-bar-fill" class="bg-gradient-to-r from-orange-500 to-amber-400 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 40%;"></div>
+                    </div>
+                </div>
+
+                <!-- Streak Calendar Section -->
+                <div class="bg-cardBg rounded-3xl p-6 border border-slate-800/80 shadow-lg">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold">Streak Calendar</h3>
+                            <p class="text-xs text-slate-400">Track your daily consistency in real-time</p>
+                        </div>
+                        <div class="flex items-center gap-2 bg-cardLight px-3 py-1.5 rounded-xl border border-slate-700/50 text-xs font-semibold text-slate-200">
+                            <span>📅 October 2026</span>
+                        </div>
+                    </div>
+
+                    <!-- Days Header Grid -->
+                    <div class="grid grid-cols-7 gap-2.5 text-center mb-3">
+                        <div class="text-xs font-semibold text-slate-400">Mon</div>
+                        <div class="text-xs font-semibold text-slate-400">Tue</div>
+                        <div class="text-xs font-semibold text-slate-400">Wed</div>
+                        <div class="text-xs font-semibold text-slate-400">Thu</div>
+                        <div class="text-xs font-semibold text-slate-400">Fri</div>
+                        <div class="text-xs font-semibold text-slate-400">Sat</div>
+                        <div class="text-xs font-semibold text-slate-400">Sun</div>
+                    </div>
+
+                    <!-- Calendar Days Dynamic Container -->
+                    <div id="calendar-grid-container" class="grid grid-cols-7 gap-2.5">
+                        <!-- Populated by JavaScript -->
+                    </div>
+
+                    <!-- Calendar Legend -->
+                    <div class="flex flex-wrap items-center gap-6 mt-6 pt-4 border-t border-slate-800/60 text-xs text-slate-400">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3.5 h-3.5 rounded-lg bg-amber-500 shadow-sm shadow-amber-500/30"></span>
+                            <span>Completed</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3.5 h-3.5 rounded-lg bg-cardLight border border-slate-700"></span>
+                            <span>Not yet</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3.5 h-3.5 rounded-lg border-2 border-orange-500 bg-orange-500/10"></span>
+                            <span>Today</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column (Span 1) -->
+            <div class="space-y-6">
+                <div class="bg-cardBg rounded-3xl p-6 border border-slate-800/80 shadow-lg">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold flex items-center gap-2">
+                            <span>🎁</span> Streak Rewards
+                        </h3>
+                        <a href="#" class="text-xs text-blue-400 hover:text-blue-300 font-semibold transition-colors">View all</a>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 rounded-2xl bg-cardLight/50 border border-slate-800/60">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-lg">⚡</div>
+                                <div>
+                                    <div class="text-sm font-semibold">7 days</div>
+                                    <div class="text-xs text-orange-400 font-medium">+100 coins</div>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full font-medium border border-emerald-500/20">Claimed</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 rounded-2xl bg-cardLight/50 border border-slate-800/60">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-lg">🐻</div>
+                                <div>
+                                    <div class="text-sm font-semibold">14 days</div>
+                                    <div class="text-xs text-slate-400">Custom Character (Basic)</div>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-medium">Locked</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 rounded-2xl bg-cardLight/50 border border-slate-800/60">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-lg">👑</div>
+                                <div>
+                                    <div class="text-sm font-semibold">30 days</div>
+                                    <div class="text-xs text-slate-400">Custom Character (Advanced)</div>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full font-medium">Locked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-cardBg rounded-3xl p-6 border border-slate-800/80 shadow-lg">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold">Your Character</h3>
+                        <button onclick="editCharacter()" class="text-slate-400 hover:text-white transition-colors text-sm hover:scale-110" title="Edit Karakter">✏️</button>
+                    </div>
+                    <div class="flex items-center gap-4 p-3 bg-cardLight/40 rounded-2xl border border-slate-800/60">
+                        <div class="relative">
+                            <div id="character-icon-badge" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-600 to-amber-700 flex items-center justify-center text-2xl shadow-md border border-amber-500/30">
+                                🐻
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 bg-cyan-500 text-darkBg text-[10px] font-extrabold px-1.5 py-0.5 rounded-md shadow">
+                                LV 1
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-1">
+                                <h4 id="character-name-display" class="text-sm font-bold text-white">Wander</h4>
+                                <span class="text-[11px] text-blue-400 font-semibold">65%</span>
+                            </div>
+                            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
+                                <div class="bg-gradient-to-r from-blue-500 to-cyan-400 h-full rounded-full" style="width: 65%;"></div>
+                            </div>
+                            <div class="text-[11px] text-slate-400 mt-1">1250 / 2000 XP</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 text-white overflow-hidden shadow-xl">
+                    <h4 class="font-bold text-base mb-1">Better steps, better you! ♡</h4>
+                    <p class="text-xs text-blue-100 leading-relaxed">Konsistensi kecil setiap hari akan membuahkan hasil luar biasa.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id="page-ranks" class="page-view flex-1 overflow-y-auto p-8">
+            <div class="max-w-2xl bg-cardBg p-8 rounded-3xl border border-slate-800 shadow-xl">
+                <h2 class="text-2xl font-bold mb-2">🏆 Global Ranks</h2>
+                <p class="text-slate-400 text-sm mb-6">See how you compare with other active walkers worldwide.</p>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-4 bg-cardLight/50 rounded-2xl border border-slate-800">
+                        <span class="font-bold text-amber-400">#1 Alex Morgan</span>
+                        <span class="text-sm text-slate-300 font-semibold">24,520 steps</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-cardLight/50 rounded-2xl border border-slate-800">
+                        <span class="font-bold text-slate-300">#2 Sarah Jenkins</span>
+                        <span class="text-sm text-slate-300 font-semibold">21,100 steps</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-blue-600/20 rounded-2xl border border-blue-500/40">
+                        <span class="font-bold text-blue-400">#14 Tsabitah (You)</span>
+                        <span class="text-sm text-blue-300 font-semibold" id="rank-step-val">7,840 steps</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-history" class="page-view flex-1 overflow-y-auto p-8">
+            <div class="max-w-2xl bg-cardBg p-8 rounded-3xl border border-slate-800 shadow-xl">
+                <h2 class="text-2xl font-bold mb-2">⏳ Walking History</h2>
+                <p class="text-slate-400 text-sm mb-6">Your past performance logs over the last 7 days.</p>
+                <div class="space-y-3 text-sm text-slate-300">
+                    <div class="flex justify-between p-3 bg-cardLight/40 rounded-xl border border-slate-800"><span>Yesterday (30 Sep)</span><span class="font-bold text-emerald-400">10,420 steps</span></div>
+                    <div class="flex justify-between p-3 bg-cardLight/40 rounded-xl border border-slate-800"><span>29 Sep</span><span class="font-bold text-emerald-400">11,200 steps</span></div>
+                    <div class="flex justify-between p-3 bg-cardLight/40 rounded-xl border border-slate-800"><span>28 Sep</span><span class="font-bold text-amber-400">8,150 steps</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-goals" class="page-view flex-1 overflow-y-auto p-8">
+            <div class="max-w-2xl bg-cardBg p-8 rounded-3xl border border-slate-800 shadow-xl">
+                <h2 class="text-2xl font-bold mb-2">🎯 Daily Goals</h2>
+                <p class="text-slate-400 text-sm mb-6">Configure your custom health and fitness targets.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400">Daily Step Target</label>
+                        <input id="goal-steps-input" type="number" value="10000" class="w-full mt-1.5 bg-cardLight border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-400">Daily Calorie Target (kcal)</label>
+                        <input id="goal-cals-input" type="number" value="500" class="w-full mt-1.5 bg-cardLight border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                    </div>
+                    <button onclick="saveGoals()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-all mt-2 cursor-pointer shadow-lg shadow-blue-500/20">Save Preferences</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-character" class="page-view flex-1 overflow-y-auto p-6 lg:p-8">
+            <div class="max-w-2xl bg-cardBg p-8 rounded-3xl border border-slate-800 shadow-xl flex flex-col sm:flex-row items-center gap-6">
+                <div id="character-main-avatar" class="w-24 h-24 rounded-3xl bg-amber-600 flex items-center justify-center text-5xl shadow-lg border border-amber-500">🐻</div>
+                <div class="flex-1 text-center sm:text-left">
+                    <h2 id="character-main-title" class="text-2xl font-bold">Wander (Level 1)</h2>
+                    <p class="text-slate-400 text-sm mt-1">Your loyal forest companion. Evolves at 30-day streak milestone.</p>
+                    <div class="mt-4 flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                        <span class="inline-flex items-center gap-2 bg-blue-500/20 text-blue-300 px-3 py-1.5 rounded-xl text-xs font-semibold border border-blue-500/30">
+                            ⚡ Active Buff: +10% Step XP Bonus
+                        </span>
+                        <button onclick="editCharacter()" class="bg-cardLight hover:bg-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-700 transition-colors cursor-pointer">
+                            ✏️ Edit Karakter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Mobile Bottom Navigation Bar (Visible only on screens < md) -->
+    <nav id="mobile-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-cardBg/95 backdrop-blur-md border-t border-slate-800 z-50 flex items-center justify-around py-2 px-1 shadow-2xl">
+        <button onclick="switchPage('home')" id="mob-nav-home" class="flex flex-col items-center px-2 py-1 text-slate-400 hover:text-white transition-colors">
+            <span class="text-lg">🏠</span>
+            <span class="text-[10px] font-medium mt-0.5">Home</span>
+        </button>
+        <button onclick="switchPage('stepcount')" id="mob-nav-stepcount" class="flex flex-col items-center px-2 py-1 text-slate-400 hover:text-white transition-colors">
+            <span class="text-lg">👟</span>
+            <span class="text-[10px] font-medium mt-0.5">Steps</span>
+        </button>
+        <button onclick="switchPage('streak')" id="mob-nav-streak" class="flex flex-col items-center px-2 py-1 text-blue-400 font-semibold bg-blue-500/10 rounded-xl transition-colors">
+            <span class="text-lg">🔥</span>
+            <span class="text-[10px] font-medium mt-0.5">Streak</span>
+        </button>
+        <button onclick="switchPage('ranks')" id="mob-nav-ranks" class="flex flex-col items-center px-2 py-1 text-slate-400 hover:text-white transition-colors">
+            <span class="text-lg">🏆</span>
+            <span class="text-[10px] font-medium mt-0.5">Ranks</span>
+        </button>
+        <button onclick="switchPage('goals')" id="mob-nav-goals" class="flex flex-col items-center px-2 py-1 text-slate-400 hover:text-white transition-colors">
+            <span class="text-lg">🎯</span>
+            <span class="text-[10px] font-medium mt-0.5">Goals</span>
+        </button>
+        <button onclick="switchPage('character')" id="mob-nav-character" class="flex flex-col items-center px-2 py-1 text-slate-400 hover:text-white transition-colors">
+            <span class="text-lg">🐻</span>
+            <span class="text-[10px] font-medium mt-0.5">Character</span>
+        </button>
+    </nav>
+
+    <script>
+        // Application State
+        let state = {
+            currentStreak: 12,
+            maxStreak: 30,
+            todaySteps: 7840,
+            stepGoal: 10000,
+            characterName: 'Wander',
+            characterAvatar: '🐻'
+        };
+
+        // Navigation Switcher Function
+        function switchPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page-view');
+            pages.forEach(p => {
+                p.classList.remove('active');
+                p.classList.remove('page-view-flex');
+            });
+
+            // Remove active classes from desktop nav buttons
+            const navButtons = document.querySelectorAll('aside nav button');
+            navButtons.forEach(btn => {
+                btn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all font-medium text-sm";
+            });
+
+            // Show selected page
+            const targetPage = document.getElementById('page-' + pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+
+            // Highlight target desktop nav button
+            const targetNav = document.getElementById('nav-' + pageId);
+            if (targetNav) {
+                targetNav.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white bg-accentBlue shadow-lg shadow-blue-500/20 font-medium text-sm";
+            }
+
+            // Highlight target mobile nav button
+            const mobButtons = document.querySelectorAll('#mobile-nav button');
+            mobButtons.forEach(btn => {
+                btn.className = "flex flex-col items-center px-2 py-1 text-slate-400 hover:text-white transition-colors";
+            });
+            const targetMobNav = document.getElementById('mob-nav-' + pageId);
+            if (targetMobNav) {
+                targetMobNav.className = "flex flex-col items-center px-2 py-1 text-blue-400 font-semibold bg-blue-500/10 rounded-xl transition-colors";
+            }
+
+            // Refresh UI values
+            updateUI();
+        }
+
+        // Render Calendar & Sync UI Values
+        function renderCalendar() {
+            const container = document.getElementById('calendar-grid-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            // October 1, 2026 starts on Thursday (Mon=0, Tue=1, Wed=2, Thu=3)
+            // Add 3 blank offset cells so 1st lands under Thu
+            for (let b = 0; b < 3; b++) {
+                const blank = document.createElement('div');
+                blank.className = "h-14 sm:h-16 rounded-2xl opacity-0 pointer-events-none";
+                container.appendChild(blank);
+            }
+
+            for (let i = 1; i <= 31; i++) {
+                const dayBox = document.createElement('div');
+                let baseClasses = "h-14 sm:h-16 rounded-2xl flex flex-col items-center justify-center font-semibold text-sm transition-all relative select-none ";
+                
+                if (i <= state.currentStreak) {
+                    baseClasses += "bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-md shadow-orange-500/20";
+                } else {
+                    baseClasses += "bg-cardLight/60 text-slate-400 border border-slate-800/80 hover:border-slate-700";
+                }
+
+                if (i === 1) { // October 1 current day
+                    baseClasses += " ring-2 ring-orange-500 ring-offset-2 ring-offset-cardBg";
+                }
+
+                dayBox.className = baseClasses;
+                dayBox.innerHTML = `
+                    <span class="text-sm font-bold ${i <= state.currentStreak ? 'text-white' : 'text-slate-300'}">${i}</span>
+                    ${i <= state.currentStreak ? '<span class="text-[10px] mt-0.5">🔥</span>' : '<span class="text-[9px] text-slate-500 mt-0.5">·</span>'}
+                `;
+                container.appendChild(dayBox);
+            }
+        }
+
+        function updateUI() {
+            // Streak UI
+            const streakDisplay = document.getElementById('streak-days-display');
+            if (streakDisplay) streakDisplay.innerText = `${state.currentStreak} days`;
+            
+            const progressFraction = document.getElementById('progress-fraction');
+            if (progressFraction) progressFraction.innerText = `${state.currentStreak}/${state.maxStreak} days`;
+
+            const progressBarFill = document.getElementById('progress-bar-fill');
+            if (progressBarFill) {
+                const pct = Math.min(100, (state.currentStreak / state.maxStreak) * 100);
+                progressBarFill.style.width = `${pct}%`;
+            }
+
+            renderCalendar();
+
+            // Step Count UI
+            const liveSteps = document.getElementById('live-step_count') || document.getElementById('live-step-count');
+            if (liveSteps) liveSteps.innerText = state.todaySteps.toLocaleString();
+
+            const stepProgressFill = document.getElementById('step-progress-fill');
+            if (stepProgressFill) {
+                const stepPct = Math.min(100, (state.todaySteps / state.stepGoal) * 100);
+                stepProgressFill.style.width = `${stepPct}%`;
+            }
+
+            // Metrics Calculations
+            const cals = Math.round(state.todaySteps * 0.04);
+            const dist = (state.todaySteps * 0.00074).toFixed(1);
+            const totalMinutes = Math.round(state.todaySteps / 105);
+            const hrs = Math.floor(totalMinutes / 60);
+            const mins = totalMinutes % 60;
+
+            if (document.getElementById('metric-cals')) document.getElementById('metric-cals').innerText = `${cals} kcal`;
+            if (document.getElementById('metric-dist')) document.getElementById('metric-dist').innerText = `${dist} km`;
+            if (document.getElementById('metric-time')) document.getElementById('metric-time').innerText = `${hrs}h ${mins}m`;
+
+            // Home Page UI sync
+            if (document.getElementById('home-steps')) document.getElementById('home-steps').innerText = state.todaySteps.toLocaleString();
+            if (document.getElementById('home-streak')) document.getElementById('home-streak').innerText = `${state.currentStreak} Days`;
+            if (document.getElementById('home-cals')) document.getElementById('home-cals').innerText = `${cals} kcal`;
+            
+            const homePct = Math.round((state.todaySteps / state.stepGoal) * 100);
+            if (document.getElementById('home-goal-pct')) document.getElementById('home-goal-pct').innerText = `${homePct}%`;
+            if (document.getElementById('home-goal-bar')) document.getElementById('home-goal-bar').style.width = `${Math.min(100, homePct)}%`;
+            if (document.getElementById('rank-step-val')) document.getElementById('rank-step-val').innerText = `${state.todaySteps.toLocaleString()} steps`;
+
+            // Character sync
+            const charNameDisp = document.getElementById('character-name-display');
+            if (charNameDisp) charNameDisp.innerText = state.characterName;
+            const charMainTitle = document.getElementById('character-main-title');
+            if (charMainTitle) charMainTitle.innerText = `${state.characterName} (Level 1)`;
+            const charIconBadge = document.getElementById('character-icon-badge');
+            if (charIconBadge) charIconBadge.innerText = state.characterAvatar;
+            const charMainAvatar = document.getElementById('character-main-avatar');
+            if (charMainAvatar) charMainAvatar.innerText = state.characterAvatar;
+        }
+
+        // Interactive Step Simulator
+        function addSteps(amount) {
+            state.todaySteps += amount;
+            updateUI();
+        }
+
+        function resetSteps() {
+            state.todaySteps = 0;
+            updateUI();
+        }
+
+        // Check-In Action
+        function performCheckIn() {
+            if (state.currentStreak < 31) {
+                state.currentStreak++;
+                updateUI();
+
+                const btn = document.getElementById('checkin-btn');
+                if (btn) {
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = `<span>✅</span> Berhasil Check-In!`;
+                    btn.classList.remove('from-orange-500', 'to-amber-500');
+                    btn.classList.add('bg-emerald-600');
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.classList.remove('bg-emerald-600');
+                        btn.classList.add('from-orange-500', 'to-amber-500');
+                    }, 2000);
+                }
+            }
+        }
+
+        // Save Daily Goals
+        function saveGoals() {
+            const stepInput = parseInt(document.getElementById('goal-steps-input')?.value);
+            if (stepInput && !isNaN(stepInput) && stepInput > 0) {
+                state.stepGoal = stepInput;
+                updateUI();
+                alert(`Target langkah berhasil diupdate ke ${stepInput.toLocaleString()} langkah!`);
+            } else {
+                alert('Silakan masukkan target langkah yang valid.');
+            }
+        }
+
+        // Edit Character Name and Avatar
+        function editCharacter() {
+            const newName = prompt('Masukkan nama karakter kamu:', state.characterName);
+            if (newName && newName.trim()) {
+                state.characterName = newName.trim();
+            }
+            const newAvatar = prompt('Pilih emoji avatar (misal: 🐻, 🐱, 🦊, 🦁, 🐼):', state.characterAvatar);
+            if (newAvatar && newAvatar.trim()) {
+                state.characterAvatar = newAvatar.trim();
+            }
+            updateUI();
+        }
+
+        // Search Input Listener
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' && event.target.value.trim()) {
+                    alert(`Hasil pencarian untuk: "${event.target.value.trim()}"`);
+                }
+            });
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            switchPage('streak'); // Default to Streak page
+        };
+    </script>
+</body>
+</html>
